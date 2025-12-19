@@ -14,6 +14,7 @@ const NO_SOLUTION_FOUND: u32 = 3;
 fn main() -> Result<(), u32> {
     let now = AllTime::must_get_current_time();
     let board = custom_boards::nova_scotia::NovaScotiaCalendarBoard {};
+    let hide_tiles = 0;
 
     println!("Using board: {}", board.name());
     println!("Today is: {:?}", now);
@@ -22,7 +23,7 @@ fn main() -> Result<(), u32> {
     match run(&now, &board) {
         Ok(solution) => {
             println!("found: ");
-            print_solution(&solution);
+            print_solution(&solution, hide_tiles);
             Ok(())
         }
         Err(e) => Err(e),
@@ -41,7 +42,7 @@ fn run(now: &AllTime, board: &dyn CustomBoard) -> Result<Vec<Tile>, u32> {
     Ok(solution)
 }
 
-fn print_solution(tiles: &Vec<Tile>) {
+fn print_solution(tiles: &Vec<Tile>, hide_tiles: usize) {
     const TILE_MARKERS: [char; 16] = [
         'I', 'O', 'B', 'S', 'X', '2', 'N', 'V', 'Y', '7', 'J', 'T', '9', 'W', 'K', 'L',
     ];
@@ -60,7 +61,7 @@ fn print_solution(tiles: &Vec<Tile>) {
     let mut output = vec![vec![' '; (max_x + 1) as usize]; (max_y + 1) as usize];
 
     let random_offset = rand::random::<u32>() as usize;
-    for (i, tile) in tiles.iter().enumerate() {
+    for (i, tile) in tiles.iter().enumerate().skip(hide_tiles) {
         let marker = TILE_MARKERS[(i + random_offset) % TILE_MARKERS.len()];
         for coor in tile {
             output[coor.y as usize][coor.x as usize] = marker;
