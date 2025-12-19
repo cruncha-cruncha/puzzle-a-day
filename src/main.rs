@@ -79,32 +79,39 @@ fn solve(active_board: &mut ActiveBoard, solution: &mut Vec<Tile>) -> bool {
     };
 
     let islands = active_board.find_islands();
-    let smallest_tile_area = active_board.smallest_tile_area();
+    let smallest_area = active_board.smallest_unplaced_tile_size();
     for island in islands {
-        if island.len() < smallest_tile_area {
-            return false; // found island too small to fit any remaining tile -> no solution possible
+        if island.len() < smallest_area {
+            return false; // found island too small to fit any remaining tiles -> no solution possible
         }
     }
 
+    // get the first open coordinate on the board
     let mut open_coor = active_board.get_next_open_coor(None);
 
     while let Some(coor) = open_coor {
+        // move tile set to current open_coor
         let offset = TileHelper::calc_offset(&tile_set.tiles[0], &coor);
         for tile in tile_set.tiles.iter_mut() {
             TileHelper::translate(tile, &offset);
         }
 
+        // try placing each orientation of the tile set at the open coordinate
         for tile in tile_set.tiles.iter() {
             if active_board.place_tile(tile_set.key, tile) {
+                // successfully placed tile, continue solving recursively (try placing the next tile)
                 if solve(active_board, solution) {
+                    // found a solution!
                     solution.push(tile.clone());
                     return true;
                 } else {
+                    // backtrack - remove the tile and try the next orientation
                     active_board.remove_tile(tile_set.key, tile);
                 }
             }
         }
 
+        // get the next open coordinate
         open_coor = active_board.get_next_open_coor(Some(&coor));
     }
 
@@ -236,7 +243,6 @@ impl TileHelper {
 }
 
 pub struct ActiveBoard {
-    smallest_tile_area: usize,
     tile_sets: Vec<Vec<Tile>>, // each tile can have eight orientations; one tile set is contains all orientations for that tile
     tile_set_placed: Vec<bool>, // a tile from the set has been placed on the board
     open_coors: Vec<Vec<bool>>, // 16x16 grid of open (true) and closed (false) coordinates
@@ -299,7 +305,6 @@ impl ActiveBoard {
         }
 
         ActiveBoard {
-            smallest_tile_area: tiles.iter().map(|t| t[0].len()).min().unwrap_or(0),
             tile_set_placed: vec![false; tiles.len()],
             tile_sets: tiles,
             open_coors,
@@ -388,8 +393,19 @@ impl ActiveBoard {
         }
     }
 
-    pub fn smallest_tile_area(&self) -> usize {
-        self.smallest_tile_area
+    pub fn smallest_unplaced_tile_size(&self) -> usize {
+        self.tile_sets
+            .iter()
+            .enumerate()
+            .filter_map(|(i, tile_set)| {
+                if !self.tile_set_placed[i] {
+                    Some(tile_set[0].len())
+                } else {
+                    None
+                }
+            })
+            .min()
+            .unwrap_or(usize::MAX)
     }
 
     pub fn find_islands(&self) -> Vec<Tile> {
