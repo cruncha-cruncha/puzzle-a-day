@@ -10,7 +10,7 @@ fn main() -> Result<(), u32> {
 }
 
 const TILE_MARKERS: [char; 16] = [
-    'I', 'O', 'B', 'S', 'X', '2', 'N', 'V', 'Y', '7', 'J', 'T', '9', 'W', '*', '%',
+    'I', 'O', 'B', 'S', 'X', '2', 'N', 'V', 'Y', '7', 'J', 'T', '9', 'W', 'K', 'L',
 ];
 const NO_SOLUTION_FOUND: u32 = 3;
 
@@ -29,7 +29,7 @@ fn run(now: AllTime, board: impl CustomBoard) -> Result<(), u32> {
 
     let mut active_board = ActiveBoard::from_custom(&board, &now);
 
-    let mut solution: Vec<Tile> = Vec::with_capacity(board.tiles().len());
+    let mut solution: Vec<Tile> = Vec::new();
     let found_solution = solve(&mut active_board, &mut solution);
     if !found_solution {
         return Err(NO_SOLUTION_FOUND);
@@ -55,8 +55,9 @@ fn print_solution(tiles: &Vec<Tile>) {
 
     let mut output = vec![vec![' '; (max_x + 1) as usize]; (max_y + 1) as usize];
 
+    let random_offset = rand::random::<u32>() as usize;
     for (i, tile) in tiles.iter().enumerate() {
-        let marker = TILE_MARKERS[i % TILE_MARKERS.len()];
+        let marker = TILE_MARKERS[(i + random_offset) % TILE_MARKERS.len()];
         for coor in tile {
             output[coor.y as usize][coor.x as usize] = marker;
         }
