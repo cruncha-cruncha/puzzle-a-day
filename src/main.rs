@@ -1,3 +1,4 @@
+use chrono::Local;
 use rand::rng;
 use rand::seq::SliceRandom;
 use std::collections::HashSet;
@@ -8,35 +9,68 @@ fn main() -> Result<(), u32> {
     run(now, board)
 }
 
+const TILE_MARKERS: [char; 16] = [
+    'I', 'O', 'B', 'S', 'X', '2', 'N', 'V', 'Y', '7', 'J', 'T', '9', 'W', '*', '%',
+];
 const NO_SOLUTION_FOUND: u32 = 3;
 
 fn get_current_time() -> AllTime {
-    // TODO: Replace with actual date fetching
+    let now = Local::now();
     return AllTime {
-        month: Month::December,
-        day_of_month: 19,
+        month: Month::from_datetime(now).unwrap_or(Month::January),
+        day_of_month: chrono::Datelike::day(&now),
     };
 }
 
 fn run(now: AllTime, board: impl CustomBoard) -> Result<(), u32> {
     println!("Using board: {}", board.name());
     println!("Today is: {:?}", now);
+    println!("Solving for: {:?}", board.point_in_time(&now));
 
     let mut active_board = ActiveBoard::from_custom(&board, &now);
-    active_board.print_to_console();
 
-    let found_solution = solve(&mut active_board);
+    let mut solution: Vec<Tile> = Vec::with_capacity(board.tiles().len());
+    let found_solution = solve(&mut active_board, &mut solution);
     if !found_solution {
         return Err(NO_SOLUTION_FOUND);
     }
 
-    println!("Solution found!");
-    active_board.print_to_console();
+    println!("found:");
+    print_solution(&solution);
 
     Ok(())
 }
 
-fn solve(active_board: &mut ActiveBoard) -> bool {
+fn print_solution(tiles: &Vec<Tile>) {
+    let max_x = tiles
+        .iter()
+        .flat_map(|tile| tile.iter().map(|coor| coor.x))
+        .max()
+        .unwrap_or(0);
+    let max_y = tiles
+        .iter()
+        .flat_map(|tile| tile.iter().map(|coor| coor.y))
+        .max()
+        .unwrap_or(0);
+
+    let mut output = vec![vec![' '; (max_x + 1) as usize]; (max_y + 1) as usize];
+
+    for (i, tile) in tiles.iter().enumerate() {
+        let marker = TILE_MARKERS[i % TILE_MARKERS.len()];
+        for coor in tile {
+            output[coor.y as usize][coor.x as usize] = marker;
+        }
+    } 
+
+    for row in output {
+        for cell in row {
+            print!("{} ", cell);
+        }
+        println!();
+    }
+}
+
+fn solve(active_board: &mut ActiveBoard, solution: &mut Vec<Tile>) -> bool {
     let mut tile_set = match active_board.get_next_tile_set() {
         Some(index) => index,
         None => {
@@ -54,7 +88,8 @@ fn solve(active_board: &mut ActiveBoard) -> bool {
 
         for tile in tile_set.tiles.iter() {
             if active_board.place_tile(tile_set.key, tile) {
-                if solve(active_board) {
+                if solve(active_board, solution) {
+                    solution.push(tile.clone());
                     return true;
                 } else {
                     active_board.remove_tile(tile_set.key, tile);
@@ -84,7 +119,28 @@ pub enum Month {
     December,
 }
 
-pub type DayOfMonth = u8;
+impl Month {
+    pub fn from_datetime(value: chrono::DateTime<Local>) -> Option<Month> {
+        let numeric = chrono::Datelike::month(&value);
+        match numeric {
+            1 => Some(Month::January),
+            2 => Some(Month::February),
+            3 => Some(Month::March),
+            4 => Some(Month::April),
+            5 => Some(Month::May),
+            6 => Some(Month::June),
+            7 => Some(Month::July),
+            8 => Some(Month::August),
+            9 => Some(Month::September),
+            10 => Some(Month::October),
+            11 => Some(Month::November),
+            12 => Some(Month::December),
+            _ => None,
+        }
+    }
+}
+
+pub type DayOfMonth = u32;
 
 #[derive(Debug)]
 pub struct AllTime {
@@ -106,6 +162,7 @@ pub type Tile = Vec<Coordinate>;
 
 pub struct TileHelper {}
 impl TileHelper {
+    #[allow(dead_code)]
     pub fn print_to_console(tile: &Tile) {
         let mut board = vec![vec!['.'; 16]; 16];
         for coor in tile {
@@ -182,6 +239,7 @@ pub struct ActiveTileSet {
 }
 
 impl ActiveBoard {
+    #[allow(dead_code)]
     pub fn print_to_console(&self) {
         for y in 0..16 {
             for x in 0..16 {
