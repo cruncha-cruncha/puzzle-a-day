@@ -78,6 +78,14 @@ fn solve(active_board: &mut ActiveBoard, solution: &mut Vec<Tile>) -> bool {
         }
     };
 
+    let islands = active_board.find_islands();
+    let smallest_tile_area = active_board.smallest_tile_area();
+    for island in islands {
+        if island.len() < smallest_tile_area {
+            return false; // found island too small to fit any remaining tile -> no solution possible
+        }
+    }
+
     let mut open_coor = active_board.get_next_open_coor(None);
 
     while let Some(coor) = open_coor {
@@ -228,6 +236,7 @@ impl TileHelper {
 }
 
 pub struct ActiveBoard {
+    smallest_tile_area: usize,
     tile_sets: Vec<Vec<Tile>>, // each tile can have eight orientations; one tile set is contains all orientations for that tile
     tile_set_placed: Vec<bool>, // a tile from the set has been placed on the board
     open_coors: Vec<Vec<bool>>, // 16x16 grid of open (true) and closed (false) coordinates
@@ -290,6 +299,7 @@ impl ActiveBoard {
         }
 
         ActiveBoard {
+            smallest_tile_area: tiles.iter().map(|t| t[0].len()).min().unwrap_or(0),
             tile_set_placed: vec![false; tiles.len()],
             tile_sets: tiles,
             open_coors,
@@ -376,6 +386,72 @@ impl ActiveBoard {
         for coor in tile.iter() {
             self.open_coors[coor.x as usize][coor.y as usize] = true;
         }
+    }
+
+    pub fn smallest_tile_area(&self) -> usize {
+        self.smallest_tile_area
+    }
+
+    pub fn find_islands(&self) -> Vec<Tile> {
+        let mut visited: HashSet<Coordinate> = HashSet::new();
+        let mut islands: Vec<Tile> = Vec::new();
+
+        for x in 0..self.open_coors.len() {
+            for y in 0..self.open_coors[0].len() {
+                let coor = Coordinate {
+                    x: x as i32,
+                    y: y as i32,
+                };
+                if self.open_coors[x][y] && !visited.contains(&coor) {
+                    // found start of new island
+                    let mut island: Tile = Vec::new();
+                    let mut stack: Vec<Coordinate> = vec![coor];
+
+                    while let Some(current) = stack.pop() {
+                        if visited.contains(&current) {
+                            continue;
+                        }
+                        visited.insert(current);
+                        island.push(current);
+
+                        // check neighbors
+                        let neighbors = vec![
+                            Coordinate {
+                                x: current.x + 1,
+                                y: current.y,
+                            },
+                            Coordinate {
+                                x: current.x - 1,
+                                y: current.y,
+                            },
+                            Coordinate {
+                                x: current.x,
+                                y: current.y + 1,
+                            },
+                            Coordinate {
+                                x: current.x,
+                                y: current.y - 1,
+                            },
+                        ];
+                        for neighbor in neighbors {
+                            if neighbor.x >= 0
+                                && neighbor.x < self.open_coors.len() as i32
+                                && neighbor.y >= 0
+                                && neighbor.y < self.open_coors[0].len() as i32
+                                && self.open_coors[neighbor.x as usize][neighbor.y as usize]
+                                && !visited.contains(&neighbor)
+                            {
+                                stack.push(neighbor);
+                            }
+                        }
+                    }
+
+                    islands.push(island);
+                }
+            }
+        }
+
+        islands
     }
 }
 
