@@ -1,0 +1,20 @@
+[package]
+name = "puzzle-a-day"
+version = "0.1.0"
+authors = ["Liam Marcassa <markassa@gmail.com>"]
+license = "MIT/Apache-2.0"
+repository = "https://github.com/cruncha-cruncha/puzzle-a-day"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+chrono = "0.4.42"
+rand = "0.9"
+wasm-bindgen = "0.2"
+serde = { version = "1.0", features = ["derive"] }
+serde-wasm-bindgen = "0.4"
+
+[target.'wasm32-unknown-unknown'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"] }

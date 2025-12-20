@@ -1,0 +1,23 @@
+{
+  "name": "puzzle-a-day",
+  "type": "module",
+  "collaborators": [
+    "Liam Marcassa <markassa@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "license": "MIT/Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cruncha-cruncha/puzzle-a-day"
+  },
+  "files": [
+    "puzzle_a_day_bg.wasm",
+    "puzzle_a_day.js",
+    "puzzle_a_day.d.ts"
+  ],
+  "main": "puzzle_a_day.js",
+  "types": "puzzle_a_day.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
