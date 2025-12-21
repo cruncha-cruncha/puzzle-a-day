@@ -4,28 +4,41 @@
     <meta charset="utf-8" />
     <title>Puzzle a Day Solver</title>
     <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="module" src="script.js"></script>
   </head>
   <body>
-    <label for="board-select">Board:</label>
-    <select name="boards" id="board-select">
-    </select>
-    <label for="target-time">Target Date:</label>
-    <input
-      type="datetime-local"
-      id="target-time"
-      name="target-time"
-      value="2025-12-25T19:30"
-    />
-    <label for="hide-pieces" id="hide-pieces-label">Hide 4 Pieces</label>
-    <input type="range" id="hide-pieces" value="4" name="hide-pieces" min="0" max="11" onchange="update_pieces_hidden(this.value)"/>
-    <button onclick="trigger_solve()">
-      Solve Puzzle
-    </button>
+    <h1>Puzzle-a-Day Solver</h1>
+    <div class="control">
+      <label for="board-select">Board:</label>
+      <select name="boards" id="board-select"></select>
+    </div>
+    <div class="control">
+      <label for="target-time">Target Date:</label>
+      <input
+        type="datetime-local"
+        id="target-time"
+        name="target-time"
+        value="2025-12-25T19:30"
+      />
+    </div>
+    <div class="control">
+      <input
+        type="range"
+        id="hide-pieces"
+        value="4"
+        name="hide-pieces"
+        min="0"
+        max="11"
+        onchange="update_pieces_hidden(this.value)"
+      />
+      <label for="hide-pieces" id="hide-pieces-label">Hide 4 Pieces</label>
+    </div>
+    <div class="control">
+      <button onclick="trigger_solve()">Generate Solution</button>
+    </div>
     <div id="solution">
-      <div style="width: 800px; height: 10px; background-color: red">
-
-      </div>
+      <div style="width: 800px; height: 10px; background-color: red"></div>
     </div>
   </body>
 </html>

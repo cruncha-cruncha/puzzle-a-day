@@ -111,7 +111,10 @@ export const update_solution = () => {
 export const trigger_solve = () => {
   const dateElem = document.getElementById("target-time");
   const boardElem = document.getElementById("board-select");
-  console.log("Triggering solve for date:", dateElem.value);
+  console.log("Triggering solve", {
+    date: dateElem.value,
+    board: boardElem.value,
+  });
   const monthMatch = dateElem.value.match(/-(\d{2})-/);
   const dayMatch = dateElem.value.match(/-(\d{2})T/);
   worker.postMessage({
