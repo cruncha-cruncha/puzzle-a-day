@@ -118,13 +118,6 @@ export const trigger_solve = () => {
   const dayMatch = dateElem.value.match(/-(\d{2})T/);
   const weekDay = new Date(dateElem.value).getDay();
 
-  console.log("Parsed date", {
-    month: monthMatch ? monthMatch[1] : null,
-    day: dayMatch ? dayMatch[1] : null,
-    week_day: `${weekDay}`,
-    board: boardElem.value,
-  });
-
   worker.postMessage({
     month: monthMatch[1],
     day: dayMatch[1],
