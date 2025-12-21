@@ -2,10 +2,12 @@ use std::collections::HashSet;
 
 use crate::common::{AllTime, Coordinate, Month, Tile, c};
 
-pub struct NovaScotiaCalendarBoard {}
-impl crate::common::CustomBoard for NovaScotiaCalendarBoard {
+#[allow(dead_code)]
+// generic (month, day-of-month) board
+pub struct GMDoMBoard {}
+impl crate::common::CustomBoard for GMDoMBoard {
     fn name(&self) -> String {
-        "Nova Scotia Calendar Board".to_string()
+        "Generic (Month, Day-of-Month) Board".to_string()
     }
 
     fn tiles(&self) -> Vec<Tile> {
@@ -16,7 +18,7 @@ impl crate::common::CustomBoard for NovaScotiaCalendarBoard {
             vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1), c(1, 1)],          // chipped rectangle
             vec![c(0, 0), c(1, 0), c(2, 0), c(3, 0), c(0, 1)],          // lowercase L
             vec![c(0, 0), c(1, 0), c(2, 0), c(2, 1), c(3, 1)],          // lighting bolt
-            vec![c(0, 0), c(1, 0), c(1, 1), c(1, 2), c(2, 2)],          // zig zag
+            vec![c(0, 0), c(1, 0), c(2, 0), c(1, 1), c(1, 2)],          // uppercase T
             vec![c(0, 0), c(1, 0), c(2, 0), c(3, 0), c(1, 1)],          // weird club
         ]
     }

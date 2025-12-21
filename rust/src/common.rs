@@ -37,6 +37,17 @@ pub enum Month {
     December,
 }
 
+#[derive(Debug)]
+pub enum WeekDay {
+    Sunday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+}
+
 impl Month {
     pub fn from_datetime(value: chrono::DateTime<chrono::Local>) -> Option<Month> {
         let numeric = chrono::Datelike::month(&value);
@@ -77,29 +88,54 @@ impl Month {
     }
 }
 
+impl WeekDay {
+    pub fn from_datetime(value: chrono::DateTime<chrono::Local>) -> Option<WeekDay> {
+        let numeric = chrono::Datelike::weekday(&value).num_days_from_sunday();
+        Self::from_u32(numeric)
+    }
+
+    pub fn from_u32(value: u32) -> Option<WeekDay> {
+        match value {
+            0 => Some(WeekDay::Sunday),
+            1 => Some(WeekDay::Monday),
+            2 => Some(WeekDay::Tuesday),
+            3 => Some(WeekDay::Wednesday),
+            4 => Some(WeekDay::Thursday),
+            5 => Some(WeekDay::Friday),
+            6 => Some(WeekDay::Saturday),
+            _ => None,
+        }
+    }
+}
+
 pub type DayOfMonth = u32;
 
 #[derive(Debug)]
 pub struct AllTime {
     month: Month,
     day_of_month: DayOfMonth,
+    #[allow(dead_code)]
+    week_day: WeekDay,
 }
 
 impl AllTime {
     #[allow(dead_code)]
-    pub fn new(month: Month, day_of_month: DayOfMonth) -> AllTime {
+    pub fn new(month: Month, day_of_month: DayOfMonth, week_day: WeekDay) -> AllTime {
         AllTime {
             month,
             day_of_month,
+            week_day,
         }
     }
 
     pub fn from_datetime(value: chrono::DateTime<chrono::Local>) -> Option<AllTime> {
         let month = Month::from_datetime(value)?;
         let day_of_month = chrono::Datelike::day(&value);
+        let week_day = WeekDay::from_datetime(value)?;
         Some(AllTime {
             month,
             day_of_month,
+            week_day,
         })
     }
 
@@ -109,6 +145,11 @@ impl AllTime {
 
     pub fn day_of_month(&self) -> DayOfMonth {
         self.day_of_month
+    }
+
+    #[allow(dead_code)]
+    pub fn week_day(&self) -> &WeekDay {
+        &self.week_day
     }
 
     #[allow(dead_code)]

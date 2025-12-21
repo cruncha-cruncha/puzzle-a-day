@@ -3,14 +3,14 @@
 
 export function get_board_options(): any;
 
-export function solve(month: number, day: number, custom_board: string): any[];
+export function solve(month: number, day: number, week_day: number, custom_board: string): any[];
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly get_board_options: () => any;
-  readonly solve: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly solve: (a: number, b: number, c: number, d: number, e: number) => [number, number];
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;

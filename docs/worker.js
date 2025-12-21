@@ -7,13 +7,17 @@ init().then(() => {
 });
 
 self.onmessage = async (event) => {
-  const { month, day, board } = event.data;
+  const { month, day, week_day, custom_board } = event.data;
 
   if (!wasmReady) {
     alert("WASM module not ready");
     return;
   }
 
-  const result = solve(month, day, board);
-  self.postMessage({ result });
+  try {
+    const result = solve(month, day, week_day, custom_board);
+    self.postMessage({ result });
+  } catch (error) {
+    self.postMessage({ error: error.message });
+  }
 };

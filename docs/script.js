@@ -29,7 +29,6 @@ worker.onmessage = (event) => {
     console.error("Error solving puzzle:", error);
     alert(error);
   } else {
-    // console.log("Solve result:", result);
     PIECES = result;
     update_solution();
   }
@@ -117,10 +116,20 @@ export const trigger_solve = () => {
   });
   const monthMatch = dateElem.value.match(/-(\d{2})-/);
   const dayMatch = dateElem.value.match(/-(\d{2})T/);
+  const weekDay = new Date(dateElem.value).getDay();
+
+  console.log("Parsed date", {
+    month: monthMatch ? monthMatch[1] : null,
+    day: dayMatch ? dayMatch[1] : null,
+    week_day: `${weekDay}`,
+    board: boardElem.value,
+  });
+
   worker.postMessage({
     month: monthMatch[1],
     day: dayMatch[1],
-    board: boardElem.value,
+    week_day: `${weekDay}`,
+    custom_board: boardElem.value,
   });
 };
 

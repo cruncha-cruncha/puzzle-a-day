@@ -1,23 +1,27 @@
 use std::collections::HashSet;
 
-use crate::common::{AllTime, Coordinate, Month, Tile, c};
+use crate::common::{AllTime, Coordinate, Month, Tile, WeekDay, c};
 
-pub struct NovaScotiaCalendarBoard {}
-impl crate::common::CustomBoard for NovaScotiaCalendarBoard {
+#[allow(dead_code)]
+// generic (month, day-of-month, week-day) board
+pub struct GMDoMWDBoard {}
+impl crate::common::CustomBoard for GMDoMWDBoard {
     fn name(&self) -> String {
-        "Nova Scotia Calendar Board".to_string()
+        "Generic (Month, Day-of-Month, Week-Day) Board".to_string()
     }
 
     fn tiles(&self) -> Vec<Tile> {
         vec![
-            vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1), c(1, 1), c(2, 1)], // big rectangle
-            vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1), c(2, 1)],          // horseshoe
-            vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1), c(0, 2)],          // angle bracket
-            vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1), c(1, 1)],          // chipped rectangle
-            vec![c(0, 0), c(1, 0), c(2, 0), c(3, 0), c(0, 1)],          // lowercase L
-            vec![c(0, 0), c(1, 0), c(2, 0), c(2, 1), c(3, 1)],          // lighting bolt
-            vec![c(0, 0), c(1, 0), c(1, 1), c(1, 2), c(2, 2)],          // zig zag
-            vec![c(0, 0), c(1, 0), c(2, 0), c(3, 0), c(1, 1)],          // weird club
+            vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1), c(2, 1)], // horseshoe
+            vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1), c(0, 2)], // angle bracket
+            vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1), c(1, 1)], // chipped rectangle
+            vec![c(0, 0), c(1, 0), c(2, 0), c(3, 0), c(0, 1)], // lowercase L
+            vec![c(0, 0), c(1, 0), c(2, 0), c(0, 1)],          // littler L
+            vec![c(0, 0), c(1, 0), c(2, 0), c(2, 1), c(3, 1)], // lighting bolt
+            vec![c(0, 0), c(1, 0), c(1, 1), c(1, 2), c(2, 2)], // zig zag
+            vec![c(0, 0), c(1, 0), c(2, 0), c(3, 0)],          // line
+            vec![c(0, 0), c(1, 0), c(2, 0), c(1, 1), c(1, 2)], // uppercase T
+            vec![c(0, 0), c(1, 0), c(1, 1), c(2, 1)],          // little zag
         ]
     }
 
@@ -30,7 +34,8 @@ impl crate::common::CustomBoard for NovaScotiaCalendarBoard {
             c(0,3), c(1,3), c(2,3), c(3,3), c(4,3), c(5,3), c(6,3),
             c(0,4), c(1,4), c(2,4), c(3,4), c(4,4), c(5,4), c(6,4),
             c(0,5), c(1,5), c(2,5), c(3,5), c(4,5), c(5,5), c(6,5),
-            c(0,6), c(1,6), c(2,6)
+            c(0,6), c(1,6), c(2,6), c(3,6), c(4,6), c(5,6), c(6,6),
+                                            c(4,7), c(5,7), c(6,7),
         ]
     }
 
@@ -84,6 +89,16 @@ impl crate::common::CustomBoard for NovaScotiaCalendarBoard {
             29 => out.insert(c(0, 6)),
             30 => out.insert(c(1, 6)),
             _ => return None,
+        };
+
+        match pit.week_day() {
+            WeekDay::Sunday => out.insert(c(3, 6)),
+            WeekDay::Monday => out.insert(c(4, 6)),
+            WeekDay::Tuesday => out.insert(c(5, 6)),
+            WeekDay::Wednesday => out.insert(c(6, 6)),
+            WeekDay::Thursday => out.insert(c(4, 7)),
+            WeekDay::Friday => out.insert(c(5, 7)),
+            WeekDay::Saturday => out.insert(c(6, 7)),
         };
 
         Some(out)

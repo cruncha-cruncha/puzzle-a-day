@@ -194,13 +194,14 @@ export function get_board_options() {
 /**
  * @param {number} month
  * @param {number} day
+ * @param {number} week_day
  * @param {string} custom_board
  * @returns {any[]}
  */
-export function solve(month, day, custom_board) {
+export function solve(month, day, week_day, custom_board) {
     const ptr0 = passStringToWasm0(custom_board, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.solve(month, day, ptr0, len0);
+    const ret = wasm.solve(month, day, week_day, ptr0, len0);
     var v2 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
     wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
     return v2;

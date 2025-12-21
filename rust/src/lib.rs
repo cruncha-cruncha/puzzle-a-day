@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
 
-use crate::common::Coordinate;
+use crate::common::{Coordinate, WeekDay};
 
 mod active_board;
 mod common;
@@ -12,8 +12,12 @@ mod solver;
 mod tile_helper;
 
 #[allow(dead_code)]
-pub const CUSTOM_BOARDS: [&dyn common::CustomBoard; 1] =
-    [&crate::custom_boards::nova_scotia::NovaScotiaCalendarBoard {}];
+pub const CUSTOM_BOARDS: [&dyn common::CustomBoard; 4] = [
+    &crate::custom_boards::nova_scotia::NovaScotiaCalendarBoard {},
+    &crate::custom_boards::gmdm::GMDoMBoard {},
+    &crate::custom_boards::gmdmwd::GMDoMWDBoard {},
+    &crate::custom_boards::gt::GTBoard {},
+];
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct JsTile {
@@ -21,9 +25,10 @@ pub struct JsTile {
 }
 
 #[wasm_bindgen]
-pub fn solve(month: u32, day: u32, custom_board: &str) -> Vec<JsValue> {
+pub fn solve(month: u32, day: u32, week_day: u32, custom_board: &str) -> Vec<JsValue> {
     let month = Month::from_u32(month).unwrap();
-    let all_time = AllTime::new(month, day);
+    let week_day = WeekDay::from_u32(week_day).unwrap();
+    let all_time = AllTime::new(month, day, week_day);
     let board = match CUSTOM_BOARDS.iter().find(|b| b.name() == custom_board) {
         Some(b) => b,
         None => return vec![],
