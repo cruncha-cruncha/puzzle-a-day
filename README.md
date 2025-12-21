@@ -2,7 +2,7 @@
 
 Generate solutions for puzzle-a-day calendars.
 
-[https://cruncha-cruncha.github.io/puzzle-a-day/docs/](https://cruncha-cruncha.github.io/puzzle-a-day/docs/)
+[https://cruncha-cruncha.github.io/puzzle-a-day/](https://cruncha-cruncha.github.io/puzzle-a-day/)
 
 ## Development
 Build the wasm files
