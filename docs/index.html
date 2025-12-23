@@ -3,9 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <title>Puzzle a Day Solver</title>
-    <link rel="stylesheet" href="style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="module" src="script.js"></script>
+    <style>
+      .control {
+        margin: 16px 0;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+    </style>
   </head>
   <body>
     <h1>Puzzle-a-Day Solver</h1>
@@ -25,14 +32,14 @@
     <div class="control">
       <input
         type="range"
-        id="hide-pieces"
-        value="4"
-        name="hide-pieces"
+        id="show-pieces"
+        value="3"
+        name="show-pieces"
         min="0"
         max="11"
-        onchange="update_pieces_hidden(this.value)"
+        onchange="update_pieces_shown(this.value)"
       />
-      <label for="hide-pieces" id="hide-pieces-label">Hide 4 Pieces</label>
+      <label for="show-pieces" id="show-pieces-label">Show 3 Pieces</label>
     </div>
     <div class="control">
       <button onclick="trigger_solve()">Generate Solution</button>

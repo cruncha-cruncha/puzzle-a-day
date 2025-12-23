@@ -42,7 +42,7 @@ export const update_solution = () => {
     return;
   }
 
-  const hidePieces = parseInt(document.getElementById("hide-pieces").value, 10);
+  const showPieces = parseInt(document.getElementById("show-pieces").value, 10);
 
   // find boundary rectangle
   const max_x = Math.max(
@@ -62,10 +62,10 @@ export const update_solution = () => {
     colorMap[i] = COLORS[i % COLORS.length];
   }
 
-  // then filter pieces based on hidePieces
+  // then filter pieces based on showPieces
   const visiblePieces = PIECES.slice(
     0,
-    Math.max(PIECES.length - hidePieces, 0)
+    showPieces >= PIECES.length ? PIECES.length : showPieces
   );
 
   // define the display grid
@@ -126,11 +126,15 @@ export const trigger_solve = () => {
   });
 };
 
-export const update_pieces_hidden = () => {
-  const value = document.getElementById("hide-pieces").value;
-  const text = `Hide ${value} Pieces`;
-  document.getElementById("hide-pieces-label").innerText = text;
+export const update_pieces_shown = () => {
+  update_pieces_shown_label();
   update_solution();
+};
+
+export const update_pieces_shown_label = () => {
+  const value = document.getElementById("show-pieces").value;
+  const text = `Show ${value} Piece${value == 1 ? "" : "s"}`;
+  document.getElementById("show-pieces-label").innerText = text;
 };
 
 const populate_board_options = async () => {
@@ -157,11 +161,17 @@ const set_default_date_time = () => {
   document.getElementById("target-time").value = formattedDatetime;
 };
 
+const register_label_update = () => {
+  const showPiecesInput = document.getElementById("show-pieces");
+  showPiecesInput.addEventListener("input", update_pieces_shown_label);
+}
+
 window.onload = function () {
   set_default_date_time();
-  update_pieces_hidden();
+  update_pieces_shown();
   populate_board_options();
+  register_label_update();
 };
 
 window.trigger_solve = trigger_solve;
-window.update_pieces_hidden = update_pieces_hidden;
+window.update_pieces_shown = update_pieces_shown;
