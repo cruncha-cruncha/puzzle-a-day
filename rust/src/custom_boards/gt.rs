@@ -86,6 +86,7 @@ impl crate::common::CustomBoard for GTBoard {
             28 => out.insert(c(6, 5)),
             29 => out.insert(c(0, 6)),
             30 => out.insert(c(1, 6)),
+            31 => out.insert(c(2, 6)),
             _ => return None,
         };
 
